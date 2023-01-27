@@ -60,7 +60,36 @@ app.get("/", (req, res) => {
 async function run() {
   try {
     const usersCollection = client.db("mess").collection("users");
+    const bazarCollection = client.db("mess").collection("bazar");
     
+
+    app.post('/bazar', async (req, res) => {
+      const bazar = req.body;
+      const result = await bazarCollection.insertOne(bazar);
+      res.send(result);
+    })
+
+    app.get('/bazar', async (req, res) => {
+      const cursor = bazarCollection.find({});
+      const bazar = await cursor.toArray();
+      res.send(bazar);
+    })
+
+    app.delete('/bazar/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await bazarCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    app.put('/bazar/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const bazar = req.body;
+      const options = { upsert: true };
+      const result = await bazarCollection.replaceOne(query, bazar, options);
+      res.send(result);
+    })
 
     //login
 
